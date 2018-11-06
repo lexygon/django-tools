@@ -1,0 +1,1 @@
+A set of tools for my django projects like timestamps, slug generators etc.
