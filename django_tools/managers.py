@@ -17,14 +17,18 @@ class SoftDeletionQuerySet(models.QuerySet):
 
 
 class SoftDeletionManager(models.Manager):
+    _queryset_class = SoftDeletionQuerySet
+
     def __init__(self, *args, **kwargs):
         self.alive_only = kwargs.pop('alive_only', True)
         super(SoftDeletionManager, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
+        qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
+
         if self.alive_only:
-            return SoftDeletionQuerySet(self.model).filter(deleted_at=None)
-        return SoftDeletionQuerySet(self.model)
+            return qs.filter(deleted_at=None)
+        return qs
 
     def hard_delete(self):
         return self.get_queryset().hard_delete()
