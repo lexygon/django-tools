@@ -6,7 +6,6 @@ from django_tools.managers import SoftDeletionManager, StatusableManager
 
 
 class TimeStampedModel(models.Model):
-
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Yaratılma Tarihi"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Güncelleme Tarihi"))
     deleted_at = models.DateTimeField(editable=False, verbose_name=_("Silinme Tarihi"), blank=True, null=True)
@@ -14,15 +13,15 @@ class TimeStampedModel(models.Model):
     objects = SoftDeletionManager()
     all_objects = SoftDeletionManager(alive_only=False)
 
-    class Meta:
-        abstract = True
-
     def delete(self, **kwargs):
         self.deleted_at = timezone.now()
         self.save()
 
     def hard_delete(self):
         super(TimeStampedModel, self).delete()
+
+    class Meta:
+        abstract = True
 
 
 class StatusAwareModel(models.Model):
@@ -40,9 +39,6 @@ class StatusAwareModel(models.Model):
     objects = StatusableManager()
     all_objects = StatusableManager(awake_only=False)
 
-    class Meta:
-        abstract = True
-
     def active(self):
         self.status = self.ACTIVE
         self.save()
@@ -50,3 +46,6 @@ class StatusAwareModel(models.Model):
     def passive(self):
         self.status = self.PASSIVE
         self.save()
+
+    class Meta:
+        abstract = True
