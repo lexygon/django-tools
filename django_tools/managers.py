@@ -10,13 +10,13 @@ class StatusableQuerySetMixin(object):
         return self.exclude(status=self.model.PASSIVE)
 
     def active(self):
-        return super(StatusableQuerySet, self).update(status=self.model.ACTIVE)
+        return super(StatusableQuerySetMixin, self).update(status=self.model.ACTIVE)
 
     def passive(self):
-        return super(StatusableQuerySet, self).update(status=self.model.PASSIVE)
+        return super(StatusableQuerySetMixin, self).update(status=self.model.PASSIVE)
 
 
-class StatusableQuerySet(models.QuerySet, StatusableQuerySetMixin):
+class StatusableQuerySet(StatusableQuerySetMixin, models.QuerySet):
     pass
 
 
@@ -31,7 +31,7 @@ class StatusableManagerMixin(object):
         return qs
 
 
-class StatusableManager(models.Manager, StatusableManagerMixin):
+class StatusableManager(StatusableManagerMixin, models.Manager):
     _queryset_class = StatusableQuerySet
 
     def __init__(self, *args, **kwargs):
@@ -53,7 +53,7 @@ class SoftDeletionQuerySetMixin(object):
         return self.exclude(deleted_at=None)
 
 
-class SoftDeletionQuerySet(models.QuerySet, SoftDeletionQuerySetMixin):
+class SoftDeletionQuerySet(SoftDeletionQuerySetMixin, models.QuerySet):
     pass
 
 
@@ -71,7 +71,7 @@ class SoftDeletionManagerMixin(object):
         return self.get_queryset().hard_delete()
 
 
-class SoftDeletionManager(models.Manager, SoftDeletionManagerMixin):
+class SoftDeletionManager(SoftDeletionManagerMixin, models.Manager):
     _queryset_class = SoftDeletionQuerySet
 
     def __init__(self, *args, **kwargs):
